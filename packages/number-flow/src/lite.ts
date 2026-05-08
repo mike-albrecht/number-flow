@@ -709,15 +709,21 @@ export class Digit extends Char<KeyedDigitPart> {
 				if (diff != null) return diff
 			}
 
-		const diff = this.value - this._prevValue!
-		// Make it per-digit if no root trend:
+		const prev = this._prevValue!
+		const diff = this.value - prev
 		const trend = this.flow.computedTrend || Math.sign(diff)
-		// Loop around if need be:
-		if (trend < 0 && this.value > this._prevValue!)
-			return this.value - this.length - this._prevValue!
-		else if (trend > 0 && this.value < this._prevValue!)
-			return this.length - this._prevValue! + this.value
+		/** Distance across the digit wheel for a single-step carry/borrow (9↔0 in base 10). */
+		const wrapSpan = this.length - 1
 
+		if (Math.abs(diff) !== wrapSpan) return diff
+
+		// 0 → 9 on this column (shortest path is one tick backward on the wheel)
+		if (this.value > prev) return this.value - this.length - prev
+
+		// 9 → 0: short path sign follows overall number trend (fixes negative values in both directions)
+		const mag = this.length - prev + this.value
+		if (trend > 0) return mag
+		if (trend < 0) return -mag
 		return diff
 	}
 
