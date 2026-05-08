@@ -1,0 +1,26 @@
+{
+	"setupTasks": [
+		{
+			"name": "pnpm install",
+			"command": "pnpm install"
+		},
+		{
+			"name": "build number-flow",
+			"command": "pnpm --filter number-flow build"
+		},
+		{
+			"name": "build @number-flow/svelte",
+			"command": "pnpm --filter @number-flow/svelte build"
+		}
+	],
+	"tasks": {
+		"dev": {
+			"name": "digit-wrap repro",
+			"command": "pnpm --filter digit-wrap-repro dev",
+			"runAtStart": true,
+			"preview": {
+				"port": 5173
+			}
+		}
+	}
+}
